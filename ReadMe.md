@@ -635,3 +635,5 @@ cd /home/armorray.com/frontend && npm run build
 cp -r dist/* /home/armorray.com/public_html/
 chmod -R o+rx /home/armorray.com/public_html/
 ```
+
+**Crafted with ❤️ by [Varun Singh](https://github.com/VarunSingh19).**
