@@ -1,0 +1,22 @@
+# env files
+.env
+.env.*
+
+# node
+node_modules/
+
+# build artifacts
+dist/
+build/
+
+# Apryse / WebViewer (DO NOT COMMIT)
+public/webviewer/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+d i s t . z i p 
+ 
+ * . z i p 
+ 
+ *.zip

@@ -1,0 +1,56 @@
+
+services:
+  orthanc:
+    image: jodogne/orthanc-plugins:latest
+    container_name: orthanc_engine
+    restart: always
+    ports:
+      - "8042:8042" # Web Interface / DICOMWeb API
+      - "4242:4242" # DICOM Protocol
+    environment:
+      - ORTHANC_JSON={"AuthenticationEnabled":false,"HttpCorsEnabled":true,"RemoteAccessAllowed":true,"DicomWeb":{"Enable":true},"OrthancExplorer2":{"Enable":true}}
+    volumes:
+      - orthanc_data:/var/lib/orthanc/db
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: radiology_backend
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - MONGO_URI=mongodb://work_db_user:VRSqWK1fXDnx9eEO@ac-armrz66-shard-00-00.zvxkjjw.mongodb.net:27017,ac-armrz66-shard-00-01.zvxkjjw.mongodb.net:27017,ac-armrz66-shard-00-02.zvxkjjw.mongodb.net:27017/?ssl=true&replicaSet=atlas-127w6z-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0
+      - JWT_SECRET=095f3a550f444948374a40370c9a535a46521cb75d51187c5ca74fc4865ae1a8
+      - FRONTEND_URL=http://frontend:8080
+      - DICOM_SCU_AE_TITLE=MY_RADIOLOGY_SCU
+      - DICOM_SCU_PORT=4243
+      - DICOM_INCOMING_DIR=/app/uploads/dicom-incoming
+      - ORTHANC_URL=http://orthanc:8042
+    depends_on:
+      - orthanc
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: radiology_frontend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  orthanc_data:
