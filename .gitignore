@@ -35,3 +35,5 @@ Thumbs.db
 
 # Large Files
 Viewers.zip
+node_modules/ 
+.venv/ 
